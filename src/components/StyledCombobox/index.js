@@ -2,17 +2,18 @@ import React from 'react';
 
 import './styles.css';
 
-export default function StyledCombobox({ combo_label }) {
+export default function StyledCombobox(props) {
   return (
     <div className="brand_menu_style">
       <div style={{display: 'flex', width: '100%', alignItems: 'center', height: 30}}>
-        <label className="brand_label_style">{combo_label}:</label>
+        <label className="brand_label_style">{props.combo_label}:</label>
         <select className="selector_style">
-          <option></option>
-          <option>50km</option>
-          <option>100km</option>
-          <option>150km</option>
-          <option>200km</option>
+          <option>Todas</option>
+          { 
+            props.data.map((item, index) => (
+              <option key={index}>{item.Name}</option>
+            ))
+          }
         </select>
       </div>
     </div>
