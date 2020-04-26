@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 
 import { AiOutlineCar } from 'react-icons/ai';
 import { MdMotorcycle } from 'react-icons/md';
@@ -11,6 +12,17 @@ import logo from './assets/webmotors-logo.png';
 import './app.css';
 
 function App() {
+  const [makers, setMakers] = useState([]);
+
+  useEffect(() => {
+    async function getMakersFromAPI() {
+      const all_makers_response = await axios.get('http://desafioonline.webmotors.com.br/api/OnlineChallenge/Make');
+      setMakers(all_makers_response.data);
+    }
+
+    getMakersFromAPI();
+  }, []);
+  
   return (
     <div className="container">
       <header>
@@ -91,26 +103,26 @@ function App() {
                   </div>
                 </div>
               </div>
-            </li>
+            </li> 
             <li className="li_style">
               <div className="option_container">
-                  <StyledCombobox combo_label="Marca"/>
-                  <StyledCombobox combo_label="Modelo"/>
+                  <StyledCombobox data={makers} combo_label="Marca"/>
+                  {/* <StyledCombobox combo_label="Modelo"/> */}
               </div>
             </li>
             <li className="li_style">
               <div className="option_container">
-                  <StyledCombobox combo_label="Ano Desejado"/>
-                  <StyledCombobox combo_label="Faixa de preço"/>
+                  {/* <StyledCombobox combo_label="Ano Desejado"/> */}
+                  {/* <StyledCombobox combo_label="Faixa de preço"/> */}
               </div>
             </li>
             <li className="li_style">
               <div className="option_container">
-                  <StyledCombobox combo_label="Versão"/>
+                  {/* <StyledCombobox combo_label="Versão"/> */}
               </div>
             </li>
             <li className="li_style">
-              <a className="link_style"> > Busca avançada</a>
+              {/* <a className="link_style"> > Busca avançada</a> */}
             </li>
             <li className="li_style">
               <div className="search_op_style">
