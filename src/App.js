@@ -5,23 +5,42 @@ import { AiOutlineCar } from 'react-icons/ai';
 import { MdMotorcycle } from 'react-icons/md';
 import { GoLocation } from 'react-icons/go';
 
-import StyledCombobox from './components/StyledCombobox/index';
-
+// import StyledCombobox from './components/StyledCombobox/index';
 
 import logo from './assets/webmotors-logo.png';
+
 import './app.css';
+import './components/StyledCombobox/styles.css'
 
 function App() {
   const [makers, setMakers] = useState([]);
+  const [models, setModels] = useState([]);
+  
+  const [currentMakerID, setCurrentMakerID] = useState(null);
 
   useEffect(() => {
     async function getMakersFromAPI() {
-      const all_makers_response = await axios.get('http://desafioonline.webmotors.com.br/api/OnlineChallenge/Make');
-      setMakers(all_makers_response.data);
+      const response = await axios.get('http://desafioonline.webmotors.com.br/api/OnlineChallenge/Make');
+      setMakers(response.data);
     }
 
     getMakersFromAPI();
   }, []);
+
+  useEffect(() => {
+    async function getModelsFromAPI() {
+      if (currentMakerID) {
+        const response = await axios.get(`http://desafioonline.webmotors.com.br/api/OnlineChallenge/Model?MakeID=${currentMakerID}`);
+        setModels(response.data);
+      }
+    }
+
+    getModelsFromAPI()
+  }, [currentMakerID]);
+
+  function handleOnChange(e) {
+    setCurrentMakerID(e.target.value);
+  }
   
   return (
     <div className="container">
@@ -106,8 +125,33 @@ function App() {
             </li> 
             <li className="li_style">
               <div className="option_container">
-                  <StyledCombobox data={makers} combo_label="Marca"/>
-                  {/* <StyledCombobox combo_label="Modelo"/> */}
+                <div className="brand_menu_style">
+                  <div style={{display: 'flex', width: '100%', alignItems: 'center', height: 30}}>
+                    <label className="brand_label_style">Marca:</label>
+                    <select onChange={handleOnChange} className="selector_style">
+                      <option>Todas</option>
+                      { 
+                        makers.map(item => (
+                          <option key={item.ID} value={item.ID}>{item.Name}</option>
+                        ))
+                      }
+                    </select>
+                  </div>
+                </div>
+                <div className="brand_menu_style">
+                  <div style={{display: 'flex', width: '100%', alignItems: 'center', height: 30}}>
+                    <label className="brand_label_style">Modelo:</label>
+                    <select className="selector_style">
+                      <option>Todas</option>
+                      { 
+                        models.map(item => (
+                          <option key={item.ID} value={item.ID}>{item.Name}</option>
+                        ))
+                      }
+                    </select>
+                  </div>
+                </div>
+                {/* <StyledCombobox data={currentMakerID} combo_label="Modelo"/> */}
               </div>
             </li>
             <li className="li_style">
