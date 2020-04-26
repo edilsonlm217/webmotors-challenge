@@ -1,0 +1,43 @@
+.brand_menu_style {
+  border: 0.8px solid #c4c2c2;
+  border-radius: 4px;
+  display: flex;
+  padding: 5px;
+  width: 100%;
+}
+
+.brand_menu_style + .brand_menu_style {
+  margin-left: 10px;
+  height: 30px;
+}
+
+.brand_label_style {
+  color: #868686;
+  margin-right: 5px;
+  font-weight: lighter;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.selector_style {
+  margin-left: 10px;
+  display: flex;
+  border: none;
+  width: 100%;
+  min-width: 70px;
+}
+
+
+@media (max-width: 500px) {
+  .brand_menu_style {
+    width: auto;
+  }
+
+  .brand_menu_style + .brand_menu_style {
+    margin-left: 0px;
+    height: 30px;
+    margin-top: 10px;
+  }
+
+}
+
