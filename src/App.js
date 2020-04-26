@@ -5,7 +5,7 @@ import { AiOutlineCar } from 'react-icons/ai';
 import { MdMotorcycle } from 'react-icons/md';
 import { GoLocation } from 'react-icons/go';
 
-// import StyledCombobox from './components/StyledCombobox/index';
+import StyledCombobox from './components/StyledCombobox/index';
 
 import logo from './assets/webmotors-logo.png';
 
@@ -15,8 +15,12 @@ import './components/StyledCombobox/styles.css'
 function App() {
   const [makers, setMakers] = useState([]);
   const [models, setModels] = useState([]);
-  
+  const [versions, setVersions] = useState([]);
+
   const [currentMakerID, setCurrentMakerID] = useState(null);
+  const [currentModelID, setCurrentModelID] = useState(null);
+  const [currentVersionID, setCurrentVersionID] = useState(null);
+  
 
   useEffect(() => {
     async function getMakersFromAPI() {
@@ -38,8 +42,34 @@ function App() {
     getModelsFromAPI()
   }, [currentMakerID]);
 
-  function handleOnChange(e) {
-    setCurrentMakerID(e.target.value);
+  useEffect(() => {
+    async function getVersionFromAPI() {
+      if (currentModelID) {
+        const response = await axios.get(`http://desafioonline.webmotors.com.br/api/OnlineChallenge/Version?ModelID=${currentModelID}`);
+        setVersions(response.data);
+      }
+    }
+
+    getVersionFromAPI();
+  }, [currentModelID]);
+  
+  function handleOnChange(e, action) {
+    switch (action) {
+      case 'setCurrentMakerID':
+        setCurrentMakerID(e.target.value);
+        break;
+
+      case 'setCurrentModelID':
+        setCurrentModelID(e.target.value);
+        break;
+
+      case 'setCurrentVersionID':
+        setCurrentVersionID(e.target.value);
+        break;
+    
+      default:
+        break;
+    }
   }
   
   return (
@@ -128,7 +158,7 @@ function App() {
                 <div className="brand_menu_style">
                   <div style={{display: 'flex', width: '100%', alignItems: 'center', height: 30}}>
                     <label className="brand_label_style">Marca:</label>
-                    <select onChange={handleOnChange} className="selector_style">
+                    <select onChange={e => handleOnChange(e, 'setCurrentMakerID')} className="selector_style">
                       <option>Todas</option>
                       { 
                         makers.map(item => (
@@ -141,7 +171,7 @@ function App() {
                 <div className="brand_menu_style">
                   <div style={{display: 'flex', width: '100%', alignItems: 'center', height: 30}}>
                     <label className="brand_label_style">Modelo:</label>
-                    <select className="selector_style">
+                    <select onChange={e => handleOnChange(e, 'setCurrentModelID')} className="selector_style">
                       <option>Todas</option>
                       { 
                         models.map(item => (
@@ -151,7 +181,6 @@ function App() {
                     </select>
                   </div>
                 </div>
-                {/* <StyledCombobox data={currentMakerID} combo_label="Modelo"/> */}
               </div>
             </li>
             <li className="li_style">
@@ -162,7 +191,19 @@ function App() {
             </li>
             <li className="li_style">
               <div className="option_container">
-                  {/* <StyledCombobox combo_label="Versão"/> */}
+                <div className="brand_menu_style">
+                  <div style={{display: 'flex', width: '100%', alignItems: 'center', height: 30}}>
+                    <label className="brand_label_style">Versão:</label>
+                    <select onChange={e => handleOnChange(e, 'setCurrentVersionID')} className="selector_style">
+                      <option>Todas</option>
+                      { 
+                        versions.map(item => (
+                          <option key={item.ID} value={item.ID}>{item.Name}</option>
+                        ))
+                      }
+                    </select>
+                  </div>
+                </div>
               </div>
             </li>
             <li className="li_style">
