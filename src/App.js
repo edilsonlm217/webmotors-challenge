@@ -10,7 +10,6 @@ import StyledCombobox from './components/StyledCombobox/index';
 import logo from './assets/webmotors-logo.png';
 
 import './app.css';
-import './components/StyledCombobox/styles.css'
 
 function App() {
   const [makers, setMakers] = useState([]);
@@ -24,7 +23,10 @@ function App() {
 
   useEffect(() => {
     async function getMakersFromAPI() {
-      const response = await axios.get('http://desafioonline.webmotors.com.br/api/OnlineChallenge/Make');
+      const response = await axios.get(
+        'http://desafioonline.webmotors.com.br/api/OnlineChallenge/Make'
+      );
+
       setMakers(response.data);
     }
 
@@ -34,7 +36,9 @@ function App() {
   useEffect(() => {
     async function getModelsFromAPI() {
       if (currentMakerID) {
-        const response = await axios.get(`http://desafioonline.webmotors.com.br/api/OnlineChallenge/Model?MakeID=${currentMakerID}`);
+        const response = await axios.get(
+          `http://desafioonline.webmotors.com.br/api/OnlineChallenge/Model?MakeID=${currentMakerID}`
+        );
         setModels(response.data);
       }
     }
@@ -45,7 +49,9 @@ function App() {
   useEffect(() => {
     async function getVersionFromAPI() {
       if (currentModelID) {
-        const response = await axios.get(`http://desafioonline.webmotors.com.br/api/OnlineChallenge/Version?ModelID=${currentModelID}`);
+        const response = await axios.get(
+          `http://desafioonline.webmotors.com.br/api/OnlineChallenge/Version?ModelID=${currentModelID}`
+        );
         setVersions(response.data);
       }
     }
@@ -79,7 +85,7 @@ function App() {
       </header>
       <nav className="nav_style">
         <div className="buy_btns_container">
-          <button className="buy_btns">
+          <div className="buy_btns">
             <div className="icon_style">
               <AiOutlineCar size={28} color={'#e31919'}/>
             </div>
@@ -87,7 +93,7 @@ function App() {
               <p className="sub_label">COMPRAR</p>
               <p className="main_label">CARROS</p>
             </div>
-          </button>
+          </div>
           <div className="buy_btns">
             <div className="icon_style">
               <MdMotorcycle size={28} color={'#e31919'}/>
@@ -134,13 +140,21 @@ function App() {
                   <div className="location_icon_style">
                     <GoLocation size={20} color={'#e31919'}/>
                   </div>
-                  <div style={{display: 'flex', alignItems: 'center', width: '100%'}}>
+                  <div style={{
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    width: '100%'
+                  }}>
                     <label className="location_label_style">Onde:</label>
                     <input className="text_input_style"/>
                   </div>
                 </div>
                 <div className="location_menu_style_part_2">
-                  <div style={{display: 'flex', alignItems: 'center', width: '100%'}}>
+                  <div style={{
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    width: '100%'
+                  }}>
                     <label className="location_label_style">Raio:</label>
                     <select className="select_style">
                       <option></option>
@@ -156,26 +170,52 @@ function App() {
             <li className="li_style">
               <div className="option_container">
                 <div className="brand_menu_style">
-                  <div style={{display: 'flex', width: '100%', alignItems: 'center', height: 30}}>
+                  <div style={{
+                    display: 'flex',
+                    width: '100%', 
+                    alignItems: 'center', 
+                    height: 30
+                  }}>
                     <label className="brand_label_style">Marca:</label>
-                    <select onChange={e => handleOnChange(e, 'setCurrentMakerID')} className="selector_style">
+                    <select
+                      onChange={e => handleOnChange(e, 'setCurrentMakerID')} 
+                      className="selector_style"
+                    >
                       <option>Todas</option>
                       { 
                         makers.map(item => (
-                          <option key={item.ID} value={item.ID}>{item.Name}</option>
+                          <option
+                            key={item.ID} 
+                            value={item.ID}
+                          >
+                            {item.Name}
+                          </option>
                         ))
                       }
                     </select>
                   </div>
                 </div>
                 <div className="brand_menu_style">
-                  <div style={{display: 'flex', width: '100%', alignItems: 'center', height: 30}}>
+                  <div style={{
+                    display: 'flex', 
+                    width: '100%', 
+                    alignItems: 'center', 
+                    height: 30
+                  }}>
                     <label className="brand_label_style">Modelo:</label>
-                    <select onChange={e => handleOnChange(e, 'setCurrentModelID')} className="selector_style">
+                    <select 
+                      onChange={e => handleOnChange(e, 'setCurrentModelID')} 
+                      className="selector_style"
+                    >
                       <option>Todas</option>
                       { 
                         models.map(item => (
-                          <option key={item.ID} value={item.ID}>{item.Name}</option>
+                          <option
+                            key={item.ID} 
+                            value={item.ID}
+                          >
+                            {item.Name}
+                          </option>
                         ))
                       }
                     </select>
@@ -185,20 +225,33 @@ function App() {
             </li>
             <li className="li_style">
               <div className="option_container">
-                  {/* <StyledCombobox combo_label="Ano Desejado"/> */}
-                  {/* <StyledCombobox combo_label="Faixa de preço"/> */}
+                  <StyledCombobox combo_label="Ano Desejado"/>
+                  <StyledCombobox combo_label="Faixa de preço"/>
               </div>
             </li>
             <li className="li_style">
               <div className="option_container">
                 <div className="brand_menu_style">
-                  <div style={{display: 'flex', width: '100%', alignItems: 'center', height: 30}}>
+                  <div style={{
+                    display: 'flex', 
+                    width: '100%', 
+                    alignItems: 'center', 
+                    height: 30
+                  }}>
                     <label className="brand_label_style">Versão:</label>
-                    <select onChange={e => handleOnChange(e, 'setCurrentVersionID')} className="selector_style">
+                    <select
+                      onChange={e => handleOnChange(e, 'setCurrentVersionID')} 
+                      className="selector_style"
+                    >
                       <option>Todas</option>
                       { 
                         versions.map(item => (
-                          <option key={item.ID} value={item.ID}>{item.Name}</option>
+                          <option
+                            key={item.ID} 
+                            value={item.ID}
+                          >
+                            {item.Name}
+                          </option>
                         ))
                       }
                     </select>
@@ -207,11 +260,11 @@ function App() {
               </div>
             </li>
             <li className="li_style">
-              {/* <a className="link_style"> > Busca avançada</a> */}
+              <a className="link_style"> > Busca avançada</a>
             </li>
             <li className="li_style">
               <div className="search_op_style">
-                <label className="location_label_style">Limpar Filtros</label>
+                <button className="clear_filter_btn">Limpar Filtros</button>
                 <button className="search_btn">
                   <b>VER OFERTAS</b>
                 </button>
