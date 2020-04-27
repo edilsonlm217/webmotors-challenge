@@ -202,7 +202,18 @@ function App() {
           SelectedModel: parseInt(action.selector.value),
           SelectedVersion: state.SelectedVersion,
         };
-        
+      
+      case 'setCurrentVersionID':
+        return {
+          makers: allMakers,
+          models: state.models,
+          versions: state.versions,
+
+          SelectedMaker: state.SelectedMaker,
+          SelectedModel: state.SelectedModel,
+          SelectedVersion: parseInt(action.selector.value),
+        };
+
       default:
         break;
     }
