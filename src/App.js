@@ -12,6 +12,8 @@ import logo from './assets/webmotors-logo.png';
 import './app.css';
 
 function App() {
+  const [searchingMode, setSearchingMode] = useState('car');
+
   const [allMakers, setAllMakers] = useState([]);
   const [allModels, setAllModels] = useState([]);
   const [allVersions, setAllVersions] = useState([]);
@@ -223,7 +225,7 @@ function App() {
           SelectedModel: parseInt(action.selector.value),
           SelectedVersion: state.SelectedVersion,
         };
-
+        
       default:
         break;
     }
@@ -236,7 +238,10 @@ function App() {
       </header>
       <nav className="nav_style">
         <div className="buy_btns_container">
-          <div className="buy_btns">
+          <button 
+            onClick={() => setSearchingMode('car')}
+            className={searchingMode === 'car' ? 'buy_btns_active' : 'buy_btns'}
+          >
             <div className="icon_style">
               <AiOutlineCar size={28} color={'#e31919'}/>
             </div>
@@ -244,8 +249,11 @@ function App() {
               <p className="sub_label">COMPRAR</p>
               <p className="main_label">CARROS</p>
             </div>
-          </div>
-          <div className="buy_btns">
+          </button>
+          <button 
+            onClick={() => setSearchingMode('moto')}
+            className={searchingMode === 'moto' ? 'buy_btns_active' : 'buy_btns'}
+          >
             <div className="icon_style">
               <MdMotorcycle size={28} color={'#e31919'}/>
             </div>
@@ -253,7 +261,7 @@ function App() {
               <p className="sub_label">COMPRAR</p>
               <p className="main_label">MOTOS</p>
             </div>
-          </div>
+          </button>
         </div>
         <div className="sell_btn_container">
           <button className="sell_btn_style">
