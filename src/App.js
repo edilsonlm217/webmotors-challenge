@@ -12,26 +12,68 @@ import logo from './assets/webmotors-logo.png';
 import './app.css';
 
 function App() {
-  const [makers, setMakers] = useState([]);
+  const [allMakers, setAllMakers] = useState([]);
+  const [allModels, setAllModels] = useState([]);
+
+
   const [models, setModels] = useState([]);
   const [versions, setVersions] = useState([]);
 
   const [currentMakerID, setCurrentMakerID] = useState(null);
   const [currentModelID, setCurrentModelID] = useState(null);
   const [currentVersionID, setCurrentVersionID] = useState(null);
-  
 
   useEffect(() => {
-    async function getMakersFromAPI() {
+    async function getAllMakersFromAPI() {
       const response = await axios.get(
         'http://desafioonline.webmotors.com.br/api/OnlineChallenge/Make'
       );
 
-      setMakers(response.data);
+      setAllMakers(response.data);
     }
 
-    getMakersFromAPI();
+    getAllMakersFromAPI();
   }, []);
+
+  useEffect(() => {
+    function getAllVersionsFromAPI() {
+      let all_models_array = [];
+      
+      if (allMakers.length !== 0) {
+        const query_array = [];
+        
+        query_array.push(
+          allMakers.map(item => {
+            return axios.get(
+              `http://desafioonline.webmotors.com.br/api/OnlineChallenge/Model?MakeID=${item.ID}`)
+          }
+        ));
+        
+        axios
+        .all(query_array[0])
+        .then(axios.spread((...responses) => {
+          
+          let response_array = [];
+
+          response_array.push(
+            responses.map(response => {
+              return response.data
+            })
+          );
+          
+          for (let i = 0; i < response_array[0].length; i++) {        
+            for (let j = 0; j < response_array[0][i].length; j++) {   
+              all_models_array.push(response_array[0][i][j]);
+            }
+          }
+
+          setAllModels(all_models_array);
+        }));
+      }
+    }
+
+    getAllVersionsFromAPI();
+  }, [allMakers]);
 
   useEffect(() => {
     async function getModelsFromAPI() {
@@ -62,6 +104,9 @@ function App() {
   function handleOnChange(e, action) {
     switch (action) {
       case 'setCurrentMakerID':
+        if (e.target.value === 0) {
+
+        }
         setCurrentMakerID(e.target.value);
         break;
 
@@ -181,9 +226,9 @@ function App() {
                       onChange={e => handleOnChange(e, 'setCurrentMakerID')} 
                       className="selector_style"
                     >
-                      <option>Todas</option>
+                      <option value={0}>Todas</option>
                       { 
-                        makers.map(item => (
+                        allMakers.map(item => (
                           <option
                             key={item.ID} 
                             value={item.ID}
