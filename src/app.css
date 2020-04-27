@@ -41,12 +41,23 @@ html, body, #root {
 .buy_btns {
   display: flex;
   flex-direction: row;
-  padding: 10px;
   border: 1px solid;
   border-bottom: 3px solid;
   border-color: transparent;
-  background-color: transparent;
   cursor: pointer;
+  background-color: transparent;
+}
+
+.buy_btns_active {
+  display: flex;
+  flex-direction: row;
+  padding: 0px;
+  border: 1px solid;
+  border-bottom: 3px solid;
+  border-color: transparent;
+  border-radius: 2px;
+  border-bottom: 3px solid #e31919;
+  background-color: transparent;
 }
 
 .buy_btns:hover {
@@ -58,16 +69,19 @@ html, body, #root {
   display: flex;
   align-items: flex-end;
   margin-left: 15px;
+  margin-top: auto;
 }
 
 .btn_label_style {
   margin-left: 10px;
   margin-right: 15px;
+  margin-top: auto;
 }
 
 .sub_label {
   color: gray;
   font-size: 14px;
+  text-align: start;
 }
 
 .main_label {

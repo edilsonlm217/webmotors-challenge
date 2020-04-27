@@ -9,11 +9,6 @@ export default function StyledCombobox(props) {
         <label className="brand_label_style">{props.combo_label}:</label>
         <select className="selector_style">
           <option>Todas</option>
-          { 
-            props.data.map((item, index) => (
-              <option key={index}>{item.Name}</option>
-            ))
-          }
         </select>
       </div>
     </div>

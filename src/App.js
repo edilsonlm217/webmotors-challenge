@@ -12,6 +12,8 @@ import logo from './assets/webmotors-logo.png';
 import './app.css';
 
 function App() {
+  const [searchingMode, setSearchingMode] = useState('car');
+
   const [allMakers, setAllMakers] = useState([]);
   const [allModels, setAllModels] = useState([]);
   const [allVersions, setAllVersions] = useState([]);
@@ -122,7 +124,7 @@ function App() {
     }
 
     getAllVersionsFromAPI();
-  }, [allModels]);
+  }, [allModels,allMakers]);
 
 
   function reducer(state, action) {
@@ -149,39 +151,16 @@ function App() {
             }
           });
 
-          if (state.SelectedModel === 0) {
-            allVersions.forEach(versionElement => {
-              newModelsArray.forEach(modelElement => {
-                if (versionElement.ModelID === modelElement.ID) {
-                  newVersionsArray.push(versionElement);
-                }
-              });
-            });
-          } else {
-            allVersions.forEach(versionElement => {
-              if (versionElement.ModelID === state.SelectedModel) {
+          allVersions.forEach(versionElement => {
+            newModelsArray.forEach(modelElement => {
+              if (versionElement.ModelID === modelElement.ID) {
                 newVersionsArray.push(versionElement);
               }
             });
-          }
+          });
         } else {
           newModelsArray = allModels;
-
-          if (state.SelectedModel === 0) {
-            allVersions.forEach(versionElement => {
-              newModelsArray.forEach(modelElement => {
-                if (versionElement.ModelID === modelElement.ID) {
-                  newVersionsArray.push(versionElement);
-                }
-              });
-            });
-          } else {
-            allVersions.forEach(versionElement => {
-              if (versionElement.ModelID === state.SelectedModel) {
-                newVersionsArray.push(versionElement);
-              }
-            });
-          }
+          newVersionsArray = allVersions;
         }
 
         return {
@@ -190,8 +169,8 @@ function App() {
           versions: newVersionsArray,
 
           SelectedMaker: parseInt(action.selector.value),
-          SelectedModel: state.SelectedModel,
-          SelectedVersion: state.SelectedVersion,
+          SelectedModel: 0,
+          SelectedVersion: 0,
         };
 
       case 'setCurrentModelID':
@@ -223,6 +202,17 @@ function App() {
           SelectedModel: parseInt(action.selector.value),
           SelectedVersion: state.SelectedVersion,
         };
+      
+      case 'setCurrentVersionID':
+        return {
+          makers: allMakers,
+          models: state.models,
+          versions: state.versions,
+
+          SelectedMaker: state.SelectedMaker,
+          SelectedModel: state.SelectedModel,
+          SelectedVersion: parseInt(action.selector.value),
+        };
 
       default:
         break;
@@ -236,7 +226,10 @@ function App() {
       </header>
       <nav className="nav_style">
         <div className="buy_btns_container">
-          <div className="buy_btns">
+          <button 
+            onClick={() => setSearchingMode('car')}
+            className={searchingMode === 'car' ? 'buy_btns_active' : 'buy_btns'}
+          >
             <div className="icon_style">
               <AiOutlineCar size={28} color={'#e31919'}/>
             </div>
@@ -244,8 +237,11 @@ function App() {
               <p className="sub_label">COMPRAR</p>
               <p className="main_label">CARROS</p>
             </div>
-          </div>
-          <div className="buy_btns">
+          </button>
+          <button 
+            onClick={() => setSearchingMode('moto')}
+            className={searchingMode === 'moto' ? 'buy_btns_active' : 'buy_btns'}
+          >
             <div className="icon_style">
               <MdMotorcycle size={28} color={'#e31919'}/>
             </div>
@@ -253,7 +249,7 @@ function App() {
               <p className="sub_label">COMPRAR</p>
               <p className="main_label">MOTOS</p>
             </div>
-          </div>
+          </button>
         </div>
         <div className="sell_btn_container">
           <button className="sell_btn_style">
@@ -426,7 +422,7 @@ function App() {
               </div>
             </li>
             <li className="li_style">
-              <a className="link_style"> > Busca avançada</a>
+              <label className="link_style"> > Busca avançada</label>
             </li>
             <li className="li_style">
               <div className="search_op_style">
