@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useReducer } from 'react';
 import axios from 'axios';
 
 import { AiOutlineCar } from 'react-icons/ai';
@@ -16,13 +16,15 @@ function App() {
   const [allModels, setAllModels] = useState([]);
   const [allVersions, setAllVersions] = useState([]);
 
-  const [makers, setMakers] = useState([]);
-  const [models, setModels] = useState([]);
-  const [versions, setVersions] = useState([]);
+  const [state, dispatch] = useReducer(reducer, {
+    makers: [],
+    models: [],
+    versions: [],
 
-  const [currentMakerID, setCurrentMakerID] = useState(0);
-  const [currentModelID, setCurrentModelID] = useState(0);
-  // const [currentVersionID, setCurrentVersionID] = useState(null);
+    SelectedMaker: 0,
+    SelectedModel: 0,
+    SelectedVersion: 0,
+  });
 
   useEffect(() => {
     async function getAllMakersFromAPI() {
@@ -31,7 +33,6 @@ function App() {
       );
 
       setAllMakers(response.data);
-      setMakers(response.data);
     }
 
     getAllMakersFromAPI();
@@ -68,9 +69,7 @@ function App() {
               all_models_array.push(response_array[0][i][j]);
             }
           }
-
           setAllModels(all_models_array);
-          setModels(all_models_array);
         }));
       }
     }
@@ -111,7 +110,13 @@ function App() {
           }
 
           setAllVersions(all_versions_array);
-          setVersions(all_versions_array);
+          dispatch({ type: 'loadState',
+            payload: {
+              allMakers,
+              allModels,
+              allVersions: all_versions_array,
+            }
+          });
         }));
       }
     }
@@ -119,60 +124,106 @@ function App() {
     getAllVersionsFromAPI();
   }, [allModels]);
 
-  function handleOnChange(e, action) {
-    switch (action) {
-      case 'setCurrentMakerID':
-        console.log(currentModelID);
-        if (e.target.value !== '0') {
-          let newModelArray = [];
-          for (let i = 0; i < allModels.length; i++) {
-            if (allModels[i].MakeID === parseInt(e.target.value)) {
-              newModelArray.push(allModels[i]);
-            }
-          }
-          setModels(newModelArray);
-          setCurrentMakerID(parseInt(e.target.value));
-        } else {
-          
-          setModels(allModels);
-          setCurrentMakerID(0);
+
+  function reducer(state, action) {
+    switch (action.type) {
+      case 'loadState':
+        return {
+          makers: action.payload.allMakers,
+          models: action.payload.allModels,
+          versions: action.payload.allVersions,
+
+          SelectedMaker: 0,
+          SelectedModel: 0,
+          SelectedVersion: 0,
         }
-        break;
+
+      case 'setCurrentMakerID':
+        let newModelsArray = [];
+        let newVersionsArray = [];
+
+        if (parseInt(action.selector.value) !== 0) {
+          allModels.forEach(element => {
+            if (element.MakeID === parseInt(action.selector.value)) {
+              newModelsArray.push(element);
+            }
+          });
+
+          if (state.SelectedModel === 0) {
+            allVersions.forEach(versionElement => {
+              newModelsArray.forEach(modelElement => {
+                if (versionElement.ModelID === modelElement.ID) {
+                  newVersionsArray.push(versionElement);
+                }
+              });
+            });
+          } else {
+            allVersions.forEach(versionElement => {
+              if (versionElement.ModelID === state.SelectedModel) {
+                newVersionsArray.push(versionElement);
+              }
+            });
+          }
+        } else {
+          newModelsArray = allModels;
+
+          if (state.SelectedModel === 0) {
+            allVersions.forEach(versionElement => {
+              newModelsArray.forEach(modelElement => {
+                if (versionElement.ModelID === modelElement.ID) {
+                  newVersionsArray.push(versionElement);
+                }
+              });
+            });
+          } else {
+            allVersions.forEach(versionElement => {
+              if (versionElement.ModelID === state.SelectedModel) {
+                newVersionsArray.push(versionElement);
+              }
+            });
+          }
+        }
+
+        return {
+          makers: allMakers,
+          models: newModelsArray,
+          versions: newVersionsArray,
+
+          SelectedMaker: parseInt(action.selector.value),
+          SelectedModel: state.SelectedModel,
+          SelectedVersion: state.SelectedVersion,
+        };
 
       case 'setCurrentModelID':
-        //console.log(e.target.value);
-        if (e.target.value === '0' && currentMakerID === 0) {
-          setVersions(allVersions);
-        } else if (e.target.value === '0' && currentMakerID !== 0) {
-            let newVersionArray = [];
-            for (let i = 0; i < allVersions.length; i++) {
-              for (let j = 0; j < models.length; j++) {
-                if (allVersions[i].ModelID === models[j].ID) {
-                  newVersionArray.push(allVersions[i]);
-                }
-              }
+        let _newVersionsArray = [];
+
+        if (parseInt(action.selector.value) !== 0) {
+          allVersions.forEach(element => {
+            if (element.ModelID === parseInt(action.selector.value)) {
+              _newVersionsArray.push(element);
             }
-            setVersions(newVersionArray);
-            setCurrentModelID(parseInt(e.target.value));
+          });
 
-          } else if (e.target.value !== '0' && currentMakerID !== 0) {
-            let newVersionArray = [];
-            for (let i = 0; i < allVersions.length; i++) {
-              if (allVersions[i].ModelID === parseInt(e.target.value)) {
-                newVersionArray.push(allVersions[i]);
+        } else {
+          allVersions.forEach(versionElement => {
+            state.models.forEach(modelElement => {
+              if (versionElement.ModelID === modelElement.ID) {
+                _newVersionsArray.push(versionElement);
               }
-            }
-            setVersions(newVersionArray);
-            setCurrentModelID(parseInt(e.target.value));
-          }
-
+            });
+          });
+        }
         
-        break;
+        return {
+          makers: allMakers,
+          models: state.models,
+          versions: _newVersionsArray,
 
-      case 'setCurrentVersionID':
-        
-        break;
-    
+          SelectedMaker: state.SelectedMaker,
+          SelectedModel: parseInt(action.selector.value),
+          SelectedVersion: state.SelectedVersion,
+        };
+
       default:
         break;
     }
@@ -278,12 +329,17 @@ function App() {
                   }}>
                     <label className="brand_label_style">Marca:</label>
                     <select
-                      onChange={e => handleOnChange(e, 'setCurrentMakerID')} 
+                      onChange={e => dispatch({
+                        type: 'setCurrentMakerID',
+                        selector: {
+                          value: e.target.value,
+                        }
+                      })}
                       className="selector_style"
                     >
                       <option value={0}>Todas</option>
                       { 
-                        makers.map(item => (
+                        state.makers.map(item => (
                           <option
                             key={item.ID} 
                             value={item.ID}
@@ -303,13 +359,18 @@ function App() {
                     height: 30
                   }}>
                     <label className="brand_label_style">Modelo:</label>
-                    <select 
-                      onChange={e => handleOnChange(e, 'setCurrentModelID')} 
+                    <select
+                      onChange={e => dispatch({
+                        type: 'setCurrentModelID',
+                        selector: {
+                          value: e.target.value,
+                        }
+                      })}
                       className="selector_style"
                     >
                       <option value={0}>Todos</option>
                       { 
-                        models.map(item => (
+                        state.models.map(item => (
                           <option
                             key={item.ID} 
                             value={item.ID}
@@ -340,12 +401,17 @@ function App() {
                   }}>
                     <label className="brand_label_style">Versão:</label>
                     <select
-                      onChange={e => handleOnChange(e, 'setCurrentVersionID')} 
+                      onChange={e => dispatch({
+                        type: 'setCurrentVersionID',
+                        selector: {
+                          value: e.target.value,
+                        }
+                      })}
                       className="selector_style"
                     >
                       <option>Todas</option>
                       { 
-                        versions.map(item => (
+                        state.versions.map(item => (
                           <option
                             key={item.ID} 
                             value={item.ID}
