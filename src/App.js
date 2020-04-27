@@ -124,7 +124,7 @@ function App() {
     }
 
     getAllVersionsFromAPI();
-  }, [allModels]);
+  }, [allModels,allMakers]);
 
 
   function reducer(state, action) {
@@ -151,39 +151,16 @@ function App() {
             }
           });
 
-          if (state.SelectedModel === 0) {
-            allVersions.forEach(versionElement => {
-              newModelsArray.forEach(modelElement => {
-                if (versionElement.ModelID === modelElement.ID) {
-                  newVersionsArray.push(versionElement);
-                }
-              });
-            });
-          } else {
-            allVersions.forEach(versionElement => {
-              if (versionElement.ModelID === state.SelectedModel) {
+          allVersions.forEach(versionElement => {
+            newModelsArray.forEach(modelElement => {
+              if (versionElement.ModelID === modelElement.ID) {
                 newVersionsArray.push(versionElement);
               }
             });
-          }
+          });
         } else {
           newModelsArray = allModels;
-
-          if (state.SelectedModel === 0) {
-            allVersions.forEach(versionElement => {
-              newModelsArray.forEach(modelElement => {
-                if (versionElement.ModelID === modelElement.ID) {
-                  newVersionsArray.push(versionElement);
-                }
-              });
-            });
-          } else {
-            allVersions.forEach(versionElement => {
-              if (versionElement.ModelID === state.SelectedModel) {
-                newVersionsArray.push(versionElement);
-              }
-            });
-          }
+          newVersionsArray = allVersions;
         }
 
         return {
@@ -192,8 +169,8 @@ function App() {
           versions: newVersionsArray,
 
           SelectedMaker: parseInt(action.selector.value),
-          SelectedModel: state.SelectedModel,
-          SelectedVersion: state.SelectedVersion,
+          SelectedModel: 0,
+          SelectedVersion: 0,
         };
 
       case 'setCurrentModelID':
@@ -434,7 +411,7 @@ function App() {
               </div>
             </li>
             <li className="li_style">
-              <a className="link_style"> > Busca avançada</a>
+              <label className="link_style"> > Busca avançada</label>
             </li>
             <li className="li_style">
               <div className="search_op_style">
