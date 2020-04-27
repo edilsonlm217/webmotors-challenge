@@ -14,14 +14,15 @@ import './app.css';
 function App() {
   const [allMakers, setAllMakers] = useState([]);
   const [allModels, setAllModels] = useState([]);
+  const [allVersions, setAllVersions] = useState([]);
 
-
+  const [makers, setMakers] = useState([]);
   const [models, setModels] = useState([]);
   const [versions, setVersions] = useState([]);
 
-  const [currentMakerID, setCurrentMakerID] = useState(null);
-  const [currentModelID, setCurrentModelID] = useState(null);
-  const [currentVersionID, setCurrentVersionID] = useState(null);
+  const [currentMakerID, setCurrentMakerID] = useState(0);
+  const [currentModelID, setCurrentModelID] = useState(0);
+  // const [currentVersionID, setCurrentVersionID] = useState(null);
 
   useEffect(() => {
     async function getAllMakersFromAPI() {
@@ -30,13 +31,14 @@ function App() {
       );
 
       setAllMakers(response.data);
+      setMakers(response.data);
     }
 
     getAllMakersFromAPI();
   }, []);
 
   useEffect(() => {
-    function getAllVersionsFromAPI() {
+    function getAllModelsFromAPI() {
       let all_models_array = [];
       
       if (allMakers.length !== 0) {
@@ -68,54 +70,107 @@ function App() {
           }
 
           setAllModels(all_models_array);
+          setModels(all_models_array);
+        }));
+      }
+    }
+
+    getAllModelsFromAPI();
+  }, [allMakers]);
+
+  useEffect(() => {
+    function getAllVersionsFromAPI() {
+      let all_versions_array = [];
+      
+      if (allModels.length !== 0) {
+        const query_array = [];
+        
+        query_array.push(
+          allModels.map(item => {
+            return axios.get(
+              `http://desafioonline.webmotors.com.br/api/OnlineChallenge/Version?ModelID=${item.ID}`)
+          }
+        ));
+        
+        axios
+        .all(query_array[0])
+        .then(axios.spread((...responses) => {
+          
+          let response_array = [];
+
+          response_array.push(
+            responses.map(response => {
+              return response.data
+            })
+          );
+          
+          for (let i = 0; i < response_array[0].length; i++) {        
+            for (let j = 0; j < response_array[0][i].length; j++) {   
+              all_versions_array.push(response_array[0][i][j]);
+            }
+          }
+
+          setAllVersions(all_versions_array);
+          setVersions(all_versions_array);
         }));
       }
     }
 
     getAllVersionsFromAPI();
-  }, [allMakers]);
+  }, [allModels]);
 
-  useEffect(() => {
-    async function getModelsFromAPI() {
-      if (currentMakerID) {
-        const response = await axios.get(
-          `http://desafioonline.webmotors.com.br/api/OnlineChallenge/Model?MakeID=${currentMakerID}`
-        );
-        setModels(response.data);
-      }
-    }
-
-    getModelsFromAPI()
-  }, [currentMakerID]);
-
-  useEffect(() => {
-    async function getVersionFromAPI() {
-      if (currentModelID) {
-        const response = await axios.get(
-          `http://desafioonline.webmotors.com.br/api/OnlineChallenge/Version?ModelID=${currentModelID}`
-        );
-        setVersions(response.data);
-      }
-    }
-
-    getVersionFromAPI();
-  }, [currentModelID]);
-  
   function handleOnChange(e, action) {
     switch (action) {
       case 'setCurrentMakerID':
-        if (e.target.value === 0) {
-
+        console.log(currentModelID);
+        if (e.target.value !== '0') {
+          let newModelArray = [];
+          for (let i = 0; i < allModels.length; i++) {
+            if (allModels[i].MakeID === parseInt(e.target.value)) {
+              newModelArray.push(allModels[i]);
+            }
+          }
+          setModels(newModelArray);
+          setCurrentMakerID(parseInt(e.target.value));
+        } else {
+          
+          setModels(allModels);
+          setCurrentMakerID(0);
         }
-        setCurrentMakerID(e.target.value);
         break;
 
       case 'setCurrentModelID':
-        setCurrentModelID(e.target.value);
+        //console.log(e.target.value);
+        if (e.target.value === '0' && currentMakerID === 0) {
+          setVersions(allVersions);
+        } else if (e.target.value === '0' && currentMakerID !== 0) {
+            let newVersionArray = [];
+            for (let i = 0; i < allVersions.length; i++) {
+              for (let j = 0; j < models.length; j++) {
+                if (allVersions[i].ModelID === models[j].ID) {
+                  newVersionArray.push(allVersions[i]);
+                }
+              }
+            }
+            setVersions(newVersionArray);
+            setCurrentModelID(parseInt(e.target.value));
+
+          } else if (e.target.value !== '0' && currentMakerID !== 0) {
+            let newVersionArray = [];
+            for (let i = 0; i < allVersions.length; i++) {
+              if (allVersions[i].ModelID === parseInt(e.target.value)) {
+                newVersionArray.push(allVersions[i]);
+              }
+            }
+            setVersions(newVersionArray);
+            setCurrentModelID(parseInt(e.target.value));
+          }
+
+        
         break;
 
       case 'setCurrentVersionID':
-        setCurrentVersionID(e.target.value);
+        
         break;
     
       default:
@@ -228,7 +283,7 @@ function App() {
                     >
                       <option value={0}>Todas</option>
                       { 
-                        allMakers.map(item => (
+                        makers.map(item => (
                           <option
                             key={item.ID} 
                             value={item.ID}
@@ -252,7 +307,7 @@ function App() {
                       onChange={e => handleOnChange(e, 'setCurrentModelID')} 
                       className="selector_style"
                     >
-                      <option>Todas</option>
+                      <option value={0}>Todos</option>
                       { 
                         models.map(item => (
                           <option
