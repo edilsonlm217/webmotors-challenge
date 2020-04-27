@@ -225,6 +225,17 @@ html, body, #root {
   color: #e31919;
 }
 
+.clear_filter_btn {
+  background-color: transparent;
+  border: none;
+  color: #868686;
+  cursor: pointer;
+}
+
+.clear_filter_btn:hover {
+  border-bottom: 1.5px solid #868686;
+}
+
 @media (max-width: 830px) {
   .ul_style {
     grid-template-columns: repeat(1, 1fr);
