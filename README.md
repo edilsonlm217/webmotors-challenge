@@ -14,3 +14,6 @@ Após clocar o repositório para seu computador em uma pasta de sua preferencia,
 O App rodará no endereço: [http://localhost:3000] e será aberto automaticamente.
 
 Este app foi desenvolvido para compatibilidade com o browser Google Chrome e pode apresentar problemas quando executado em outra plataforma.
+
+
+<img src="https://user-images.githubusercontent.com/55609083/80555894-b6543a00-899f-11ea-9b57-4d40ab223107.JPG">
